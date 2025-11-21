@@ -35,7 +35,7 @@ Backend
   Create task
   Read list of task
   Update task
-  Delete task
+  Delete task 
   Fully connected to backend
 
 🚀 Getting Started
