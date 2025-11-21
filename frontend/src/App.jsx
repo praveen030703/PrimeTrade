@@ -1,23 +1,44 @@
-import React from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
-import DashboardLayout from './Components/DashboardLayout.jsx'
-import Dashboard from './Pages/Dashboard.jsx'
-import EditProfile from './Pages/EditProfile.jsx'
-import Login from './Pages/Login.jsx'
-import OtpVerification from './Pages/OtpVerification.jsx'
-import Profile from './Pages/Profile.jsx'
-import Register from './Pages/Register.jsx'
-import Task from './Pages/Task.jsx'
+import React from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
+import DashboardLayout from "./Components/DashboardLayout.jsx";
+import Dashboard from "./Pages/Dashboard.jsx";
+import EditProfile from "./Pages/EditProfile.jsx";
+import Login from "./Pages/Login.jsx";
+import OtpVerification from "./Pages/OtpVerification.jsx";
+import Profile from "./Pages/Profile.jsx";
+import Register from "./Pages/Register.jsx";
+import Task from "./Pages/Task.jsx";
+import CompletedTasks from "./Components/CompletedTasks.jsx";
+
+import ProtectedRoute from "./Components/ProtectedRoute.jsx";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
+
+      {/* Public Routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/otp" element={<OtpVerification />} />
 
-      <Route element={<DashboardLayout />}>
+      {/* Protected */}
+      <Route
+        path="/completed-tasks"
+        element={
+          <ProtectedRoute>
+            <CompletedTasks />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        element={
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/edit" element={<EditProfile />} />
@@ -26,7 +47,7 @@ function App() {
 
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -1,77 +1,83 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import API_URL from "../Api.js";
 
 const Login = () => {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const [form, setForm] = useState({ email: '', password: '' })
-  const [error, setError] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [infoMessage, setInfoMessage] = useState(location.state?.message ?? '')
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const location = useLocation();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [infoMessage, setInfoMessage] = useState(location.state?.message ?? "");
 
   useEffect(() => {
-    localStorage.clear()
-  }, [])
+    localStorage.clear();
+  }, []);
 
   useEffect(() => {
     if (location.state?.email) {
-      setForm((prev) => ({ ...prev, email: location.state.email }))
+      setForm((prev) => ({ ...prev, email: location.state.email }));
     }
     if (location.state?.message) {
-      setInfoMessage(location.state.message)
+      setInfoMessage(location.state.message);
     }
-  }, [location.state])
+  }, [location.state]);
 
   const handleChange = (event) => {
-    const { name, value } = event.target
-    setForm((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = event.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
-    setError('')
-    setIsSubmitting(true)
+    setError("");
+    setIsSubmitting(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
-        method: 'POST',
+      const response = await fetch(`${API_URL}login`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(form),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        setError(data?.message ?? 'Unable to sign in. Please try again.')
-        return
+        setError(data?.message ?? "Unable to sign in. Please try again.");
+        return;
       }
 
       if (data?.token) {
-        localStorage.setItem('primetrade_token', data.token)
+        localStorage.setItem("primetrade_token", data.token);
       }
 
       if (data?.user?.email) {
-        localStorage.setItem('primetrade_user_email', data.user.email)
+        localStorage.setItem("primetrade_user_email", data.user.email);
       }
 
-      navigate('/dashboard')
+      navigate("/dashboard");
     } catch (submitError) {
-      console.error('Login request failed:', submitError)
-      setError('Unable to reach the server. Please try again later.')
+      console.error("Login request failed:", submitError);
+      setError("Unable to reach the server. Please try again later.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen text-slate-100 flex items-center justify-center px-4">
       <div className="w-full max-w-md space-y-8 rounded-2xl border border-slate-800 bg-slate-900/80 p-8 shadow-2xl shadow-blue-900/20 backdrop-blur">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-extrabold tracking-tight">Welcome back to Primetrade</h1>
-          <p className="text-sm text-slate-400">Sign in to access your dashboard and tasks</p>
+          <h1 className="text-3xl font-extrabold tracking-tight">
+            Welcome back to Primetrade
+          </h1>
+          <p className="text-sm text-slate-400">
+            Sign in to access your dashboard and tasks
+          </p>
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
@@ -86,7 +92,10 @@ const Login = () => {
             </p>
           )}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-300" htmlFor="email">
+            <label
+              className="text-sm font-medium text-slate-300"
+              htmlFor="email"
+            >
               Email address
             </label>
             <input
@@ -102,19 +111,29 @@ const Login = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-300" htmlFor="password">
+            <label
+              className="text-sm font-medium text-slate-300"
+              htmlFor="password"
+            >
               Password
             </label>
             <input
               id="password"
               name="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               required
               value={form.password}
               onChange={handleChange}
               className="w-full input"
               placeholder="••••••••"
             />
+            <button
+              type="button"
+              className="absolute right-10   text-slate-300"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "🙈" : "👁️"}
+            </button>
           </div>
 
           <button
@@ -122,28 +141,32 @@ const Login = () => {
             className="w-full btn-primary disabled:cursor-not-allowed disabled:opacity-70"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Signing in…' : 'Log in'}
+            {isSubmitting ? "Signing in…" : "Log in"}
           </button>
         </form>
 
         <div className="text-center text-sm text-slate-400 space-y-1">
           <p>
-            Don't have an account?{' '}
-            <Link to="/register" className="font-medium text-blue-400 hover:text-blue-300">
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="font-medium text-blue-400 hover:text-blue-300"
+            >
               Sign up
             </Link>
           </p>
           <p>
-            
-            <Link to="/otp" className="font-medium text-blue-400 hover:text-blue-300">
+            <Link
+              to="/otp"
+              className="font-medium text-blue-400 hover:text-blue-300"
+            >
               Forgot Password?
             </Link>
           </p>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
-
+export default Login;

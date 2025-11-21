@@ -1,41 +1,48 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import API_URL from "../Api.js";
 
 const Register = () => {
-  const navigate = useNavigate()
+  const EyeOpen = "👁️";
+  const EyeClosed = "🙈";
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const navigate = useNavigate();
   const [form, setForm] = useState({
-    fullName: '',
-    email: '',
-    mobile: '',
-    dob: '',
-    gender: '',
-    password: '',
-    confirmPassword: '',
-  })
-  const [error, setError] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+    fullName: "",
+    email: "",
+    mobile: "",
+    dob: "",
+    gender: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (event) => {
-    const { name, value } = event.target
-    setForm((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = event.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
     if (form.password !== form.confirmPassword) {
-      setError('Passwords do not match. Please double-check and try again.')
-      return
+      setError("Passwords do not match. Please double-check and try again.");
+      return;
     }
 
-    setError('')
-    setIsSubmitting(true)
+    setError("");
+    setIsSubmitting(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/register', {
-        method: 'POST',
+      const response = await fetch(`${API_URL}register`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: form.fullName,
@@ -45,37 +52,42 @@ const Register = () => {
           gender: form.gender,
           password: form.password,
         }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        setError(data?.message ?? 'Unable to create account. Please try again.')
-        return
+        setError(
+          data?.message ?? "Unable to create account. Please try again."
+        );
+        return;
       }
 
-      localStorage.setItem('primetrade_pending_email', form.email)
+      localStorage.setItem("primetrade_pending_email", form.email);
 
-      navigate('/otp', {
+      navigate("/otp", {
         state: {
           email: form.email,
         },
-      })
+      });
     } catch (submitError) {
-      console.error('Register request failed:', submitError)
-      setError('Unable to reach the server. Please try again later.')
+      console.error("Register request failed:", submitError);
+      setError("Unable to reach the server. Please try again later.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen text-slate-100 flex items-center justify-center px-4">
       <div className="w-full max-w-2xl rounded-2xl border border-slate-800 bg-slate-900/80 p-10 shadow-2xl shadow-blue-900/20 backdrop-blur">
         <div className="mb-8 text-center space-y-2">
-          <h1 className="text-3xl font-extrabold tracking-tight">Create your Primetrade account</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight">
+            Create your Primetrade account
+          </h1>
           <p className="text-sm text-slate-400">
-            Register to access the dashboard, manage your profile, and stay on top of tasks.
+            Register to access the dashboard, manage your profile, and stay on
+            top of tasks.
           </p>
         </div>
 
@@ -86,7 +98,10 @@ const Register = () => {
             </p>
           )}
           <div className="grid gap-2">
-            <label className="text-sm font-medium text-slate-300" htmlFor="fullName">
+            <label
+              className="text-sm font-medium text-slate-300"
+              htmlFor="fullName"
+            >
               Full name
             </label>
             <input
@@ -102,7 +117,10 @@ const Register = () => {
 
           <div className="grid gap-2 md:grid-cols-2 md:gap-6">
             <div className="grid gap-2">
-              <label className="text-sm font-medium text-slate-300" htmlFor="email">
+              <label
+                className="text-sm font-medium text-slate-300"
+                htmlFor="email"
+              >
                 Email address
               </label>
               <input
@@ -117,7 +135,10 @@ const Register = () => {
               />
             </div>
             <div className="grid gap-2">
-              <label className="text-sm font-medium text-slate-300" htmlFor="mobile">
+              <label
+                className="text-sm font-medium text-slate-300"
+                htmlFor="mobile"
+              >
                 Mobile number
               </label>
               <input
@@ -135,7 +156,10 @@ const Register = () => {
 
           <div className="grid gap-2 md:grid-cols-2 md:gap-6">
             <div className="grid gap-2">
-              <label className="text-sm font-medium text-slate-300" htmlFor="dob">
+              <label
+                className="text-sm font-medium text-slate-300"
+                htmlFor="dob"
+              >
                 Date of birth
               </label>
               <input
@@ -149,7 +173,10 @@ const Register = () => {
               />
             </div>
             <div className="grid gap-2">
-              <label className="text-sm font-medium text-slate-300" htmlFor="gender">
+              <label
+                className="text-sm font-medium text-slate-300"
+                htmlFor="gender"
+              >
                 Gender
               </label>
               <select
@@ -171,35 +198,60 @@ const Register = () => {
           </div>
 
           <div className="grid gap-2 md:grid-cols-2 md:gap-6">
-            <div className="grid gap-2">
-              <label className="text-sm font-medium text-slate-300" htmlFor="password">
+            <div className="grid gap-2 relative">
+              <label
+                className="text-sm font-medium text-slate-300"
+                htmlFor="password"
+              >
                 Password
               </label>
+
               <input
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 required
                 value={form.password}
                 onChange={handleChange}
-                className="input"
+                className="input pr-12"
                 placeholder="Create a strong password"
               />
+
+              <button
+                type="button"
+                className="absolute right-3 top-9 text-slate-300"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </button>
             </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium text-slate-300" htmlFor="confirmPassword">
-                Confirm password
+
+            <div className="grid gap-2 relative">
+              <label
+                className="text-sm font-medium text-slate-300"
+                htmlFor="confirmPassword"
+              >
+                Confirm Password
               </label>
+
               <input
                 id="confirmPassword"
                 name="confirmPassword"
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 required
                 value={form.confirmPassword}
                 onChange={handleChange}
-                className="input"
+                className="input pr-12"
                 placeholder="Confirm password"
               />
+
+              <button
+                type="button"
+                className="absolute right-3 top-9 text-slate-300"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? "🙈" : "👁️"}
+              </button>
             </div>
           </div>
 
@@ -208,20 +260,22 @@ const Register = () => {
             className="w-full btn-primary disabled:cursor-not-allowed disabled:opacity-70"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Creating account…' : 'Sign up'}
+            {isSubmitting ? "Creating account…" : "Sign up"}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-slate-400">
-          Already have an account?{' '}
-          <Link to="/login" className="font-medium text-blue-400 hover:text-blue-300">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="font-medium text-blue-400 hover:text-blue-300"
+          >
             Sign in
           </Link>
         </p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Register
-
+export default Register;

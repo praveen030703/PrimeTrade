@@ -1,14 +1,19 @@
 // routes/authRoutes.js
 import express from "express";
-import { register, login } from "../Controller/Usercontroller.js";
+import {
+  register,
+  login,
+  getLoggedInUser,
+} from "../Controller/Usercontroller.js";
 import { verifyOtp, resendOtp } from "../Controller/OTP.js";
 import {
-    createTask,
-    getTask,
-    getTasksByEmail,
-    updateTask,
-    deleteTask,
-  } from "../Controller/Taskcontroller.js";
+  createTask,
+  getTask,
+  getTasksByEmail,
+  updateTask,
+  deleteTask,
+} from "../Controller/Taskcontroller.js";
+import { authMiddleware } from "../Middleware/auth.js";
 
 const router = express.Router();
 
@@ -17,6 +22,7 @@ router.post("/register", register);
 router.post("/login", login);
 router.post("/verify-otp", verifyOtp);
 router.post("/resend-otp", resendOtp);
+router.get("/me", authMiddleware, getLoggedInUser);
 
 //Task Routes
 router.post("/create-task", createTask);

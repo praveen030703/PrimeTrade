@@ -53,18 +53,15 @@ export const login = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
-    if (!user)
-      return res.status(404).json({ message: "User not found" });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
       return res.status(400).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
 
     res.json({
       message: "Login successful",
@@ -81,12 +78,11 @@ export const login = async (req, res) => {
   }
 };
 
-
-
 // ---------------- UPDATE USER PROFILE BY EMAIL ----------------
 export const updateUserProfileByEmail = async (req, res) => {
   try {
-    const { email, name, mobile, dob, gender, oldPassword, newPassword, otp } = req.body;
+    const { email, name, mobile, dob, gender, oldPassword, newPassword, otp } =
+      req.body;
 
     if (!email) return res.status(400).json({ message: "Email is required" });
 
@@ -102,15 +98,23 @@ export const updateUserProfileByEmail = async (req, res) => {
     // ---------------- PASSWORD CHANGE ----------------
     if (oldPassword || newPassword) {
       if (!oldPassword || !newPassword || !otp) {
-        return res.status(400).json({ message: "Old password, new password, and OTP are required" });
+        return res
+          .status(400)
+          .json({
+            message: "Old password, new password, and OTP are required",
+          });
       }
 
       // Check old password
       const isMatch = await bcrypt.compare(oldPassword, user.password);
-      if (!isMatch) return res.status(400).json({ message: "Old password is incorrect" });
+      if (!isMatch)
+        return res.status(400).json({ message: "Old password is incorrect" });
 
       // Verify OTP
-      if (String(otp) !== String(user.otpCode) || new Date() > new Date(user.otpExpiresAt)) {
+      if (
+        String(otp) !== String(user.otpCode) ||
+        new Date() > new Date(user.otpExpiresAt)
+      ) {
         return res.status(400).json({ message: "Invalid or expired OTP" });
       }
 
@@ -138,6 +142,19 @@ export const updateUserProfileByEmail = async (req, res) => {
     });
   } catch (err) {
     console.error("Update user error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getLoggedInUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select(
+      "-password -otpCode -otpExpiresAt"
+    );
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json({ user });
+  } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 };

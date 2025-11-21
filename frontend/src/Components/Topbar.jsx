@@ -1,22 +1,24 @@
-import React from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const titles = {
-  '/dashboard': 'Dashboard',
-  '/profile': 'Profile',
-  '/profile/edit': 'Edit Profile',
-  '/tasks': 'Tasks',
-}
+  "/dashboard": "Dashboard",
+  "/profile": "Profile",
+  "/profile/edit": "Edit Profile",
+  "/tasks": "Tasks",
+};
 
 const Topbar = ({ onToggleSidebar }) => {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const title = titles[location.pathname] ?? 'Primetrade'
+  const location = useLocation();
+  const navigate = useNavigate();
+  const title = titles[location.pathname] ?? "Primetrade";
 
   const handleLogout = () => {
-    localStorage.clear()
-    navigate('/login')
-  }
+    if (window.confirm("Are you sure you want to logout?")) {
+      localStorage.clear();
+      navigate("/login");
+    }
+  };
 
   return (
     <header className="bg-slate-950/70 border-b border-slate-800 px-4 py-3 backdrop-blur flex items-center justify-between gap-4 sticky top-0 z-10 sm:px-6 lg:px-8">
@@ -28,8 +30,12 @@ const Topbar = ({ onToggleSidebar }) => {
         >
           Menu
         </button>
-        <h1 className="text-2xl font-extrabold tracking-tight text-white">{title}</h1>
-        <p className="hidden text-sm text-slate-400 sm:block">Welcome back! Stay productive today.</p>
+        <h1 className="text-2xl font-extrabold tracking-tight text-white">
+          {title}
+        </h1>
+        <p className="hidden text-sm text-slate-400 sm:block">
+          Welcome back! Stay productive today.
+        </p>
       </div>
       <button
         onClick={handleLogout}
@@ -38,7 +44,7 @@ const Topbar = ({ onToggleSidebar }) => {
         Logout
       </button>
     </header>
-  )
-}
+  );
+};
 
-export default Topbar
+export default Topbar;

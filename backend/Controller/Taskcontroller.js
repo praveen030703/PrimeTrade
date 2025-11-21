@@ -16,7 +16,7 @@ const upload = multer({ storage }).single("image");
 
 // ---------------- CONTROLLER FUNCTIONS ----------------
 
-// ✅ Create Task
+// Create Task
 export const createTask = (req, res) => {
   upload(req, res, async (err) => {
     if (err) return res.status(500).json({ message: err.message });
@@ -45,7 +45,7 @@ export const createTask = (req, res) => {
   });
 };
 
-// ✅ Get tasks by email
+// Get tasks by email
 export const getTasksByEmail = async (req, res) => {
   try {
     const { email } = req.params;
@@ -66,7 +66,7 @@ export const getTasksByEmail = async (req, res) => {
   }
 };
 
-// ✅ Get single task by ID
+//  Get single task by ID
 export const getTask = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
@@ -78,7 +78,7 @@ export const getTask = async (req, res) => {
   }
 };
 
-// ✅ Update Task
+// Update Task
 export const updateTask = (req, res) => {
   upload(req, res, async (err) => {
     if (err) return res.status(500).json({ message: err.message });
@@ -112,7 +112,7 @@ export const updateTask = (req, res) => {
   });
 };
 
-// ✅ Delete Task
+// Delete Task
 export const deleteTask = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
